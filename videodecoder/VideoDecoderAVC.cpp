@@ -25,6 +25,9 @@
 #define NW_CONSUMED     2
 #define POC_DEFAULT     0x7FFFFFFF
 
+#define MAX_PICTURE_WIDTH_AVC 4096
+#define MAX_PICTURE_HEIGHT_AVC 4096
+
 VideoDecoderAVC::VideoDecoderAVC(const char *mimeType)
     : VideoDecoderBase(mimeType, VBP_H264),
       mToggleDPB(0),
@@ -65,6 +68,11 @@ Decode_Status VideoDecoderAVC::start(VideoConfigBuffer *buffer) {
     status = VideoDecoderBase::parseBuffer(buffer->data, buffer->size, true, (void**)&data);
     CHECK_STATUS("VideoDecoderBase::parseBuffer");
 
+    if (data->codec_data->frame_width > MAX_PICTURE_WIDTH_AVC ||
+            data->codec_data->frame_height > MAX_PICTURE_HEIGHT_AVC) {
+        return DECODE_INVALID_DATA;
+    }
+
     status = startVA(data);
     return status;
 }
@@ -101,6 +109,11 @@ Decode_Status VideoDecoderAVC::decode(VideoDecodeBuffer *buffer) {
             false,
             (void**)&data);
     CHECK_STATUS("VideoDecoderBase::parseBuffer");
+
+    if (data->codec_data->frame_width > MAX_PICTURE_WIDTH_AVC ||
+            data->codec_data->frame_height > MAX_PICTURE_HEIGHT_AVC) {
+        return DECODE_INVALID_DATA;
+    }
 
     if (!mVAStarted) {
          if (data->has_sps && data->has_pps) {

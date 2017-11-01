@@ -34,7 +34,7 @@ endif
 LOCAL_C_INCLUDES := \
     $(TARGET_OUT_HEADERS)/libva \
     $(call include-path-for, frameworks-native) \
-    $(TARGET_OUT_HEADERS)/pvr
+    $(TARGET_OUT_HEADERS)/pvr/hal
 
 ifeq ($(ENABLE_IMG_GRAPHICS),)
 LOCAL_C_INCLUDES += \
@@ -49,6 +49,7 @@ endif
 LOCAL_SHARED_LIBRARIES := \
     liblog \
     libcutils \
+    libion \
     libutils \
     libva \
     libva-android \
